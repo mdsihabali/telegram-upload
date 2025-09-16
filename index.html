@@ -3,12 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <title>Upload File to Telegram</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #0f0f1a, #000);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #0ff;
+    }
+
+    .card {
+      background: rgba(20, 20, 40, 0.9);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4),
+                  0 0 50px rgba(0, 255, 255, 0.2);
+      text-align: center;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 1.6rem;
+      text-shadow: 0 0 15px cyan;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin: 20px auto;
+      padding: 12px;
+      border: 2px solid cyan;
+      border-radius: 12px;
+      background: transparent;
+      color: #0ff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    input[type="file"]:hover {
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 15px cyan;
+    }
+
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(90deg, #00f0ff, #0ff);
+      color: #000;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #0ff, #00f0ff);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.9);
+    }
+  </style>
 </head>
 <body>
-  <h2>Upload a file to Telegram</h2>
-  <form action="upload.php" method="post" enctype="multipart/form-data">
-    <input type="file" name="document" required>
-    <button type="submit">Send to Telegram</button>
-  </form>
+  <div class="card">
+    <h2>🚀 Upload a File to Telegram</h2>
+    <form action="upload.php" method="post" enctype="multipart/form-data">
+      <input type="file" name="document" required>
+      <button type="submit">Send to Telegram</button>
+    </form>
+  </div>
 </body>
 </html>
