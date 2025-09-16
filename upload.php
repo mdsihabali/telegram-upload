@@ -1,7 +1,7 @@
 <?php
 // Load environment variables (from Render Dashboard)
 $botToken = getenv("8336061529:AAEuRsqv2LKCGc1CIkRU4P014nwH0lbzK40");
-$chat_id  = getenv("1074901059");
+$chat_id  = getenv("-1002111612197");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['document'])) {
     $fileTmpPath = $_FILES['document']['tmp_name'];
