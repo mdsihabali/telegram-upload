@@ -11,7 +11,7 @@ body {
 .card {
   background: rgba(20,20,40,0.9); border-radius:20px; padding:40px;
   box-shadow: 0 0 25px rgba(0,255,255,0.4),0 0 50px rgba(0,255,255,0.2);
-  text-align:center; animation:float 4s ease-in-out infinite;
+  text-align:center; animation:float 4s ease-in-out infinite; width:400px;
 }
 @keyframes float {0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
 h2 {margin-bottom:20px;font-size:1.6rem;text-shadow:0 0 15px cyan;}
@@ -19,27 +19,81 @@ input[type=file] {display:block;margin:20px auto;padding:12px;border:2px solid c
 input[type=file]:hover {background: rgba(0,255,255,0.1); box-shadow:0 0 15px cyan;}
 button {padding:12px 25px;border:none;border-radius:30px;background:linear-gradient(90deg,#00f0ff,#0ff);color:#000;font-size:1rem;font-weight:bold;cursor:pointer;transition:0.3s;box-shadow:0 0 20px rgba(0,255,255,0.6);}
 button:hover {transform:scale(1.05);background:linear-gradient(90deg,#0ff,#00f0ff);box-shadow:0 0 30px rgba(0,255,255,0.9);}
+#successMsg {color: lime; font-weight:bold; margin-bottom:10px;}
+.progressContainer {margin-top:10px; text-align:left;}
+.progressBar {
+  width: 100%; background: rgba(0,255,255,0.2); border-radius:10px; margin-bottom:5px;
+}
+.progressBarInner {
+  height: 15px; width:0%; background: cyan; border-radius:10px;
+  transition: width 0.2s;
+}
 </style>
 </head>
 <body>
 <div class="card">
-<h2>🚀 Upload File to Telegram</h2>
-<form id="uploadForm" enctype="multipart/form-data">
-<input type="file" name="document" id="fileInput" required>
-<button type="submit">Send to Telegram</button>
-</form>
+  <div id="successMsg"></div>
+  <h2>🚀 Upload File(s) to Telegram</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="document" id="fileInput" multiple required>
+    <button type="submit">Send to Telegram</button>
+  </form>
+  <div class="progressContainer" id="progressContainer"></div>
 </div>
+
 <script>
 const form = document.getElementById('uploadForm');
-form.addEventListener('submit', async (e)=>{
+const progressContainer = document.getElementById('progressContainer');
+const successMsg = document.getElementById('successMsg');
+
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const fileInput = document.getElementById('fileInput');
-  const formData = new FormData();
-  formData.append('document', fileInput.files[0]);
-  const res = await fetch('/upload',{method:'POST',body:formData});
-  const text = await res.text();
-  alert(text);
+  progressContainer.innerHTML = "";
+  successMsg.textContent = "";
+
+  const files = document.getElementById('fileInput').files;
+  for(let i=0; i<files.length; i++){
+    const file = files[i];
+    
+    // Create progress bar for each file
+    const barOuter = document.createElement('div');
+    barOuter.className = 'progressBar';
+    const barInner = document.createElement('div');
+    barInner.className = 'progressBarInner';
+    barOuter.appendChild(barInner);
+    progressContainer.appendChild(barOuter);
+
+    // Upload each file
+    await uploadFile(file, barInner);
+  }
+
+  successMsg.textContent = "✅ All files uploaded successfully!";
 });
+
+function uploadFile(file, bar){
+  return new Promise((resolve,reject)=>{
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append('document', file);
+
+    xhr.upload.addEventListener('progress', (e)=>{
+      if(e.lengthComputable){
+        const percent = (e.loaded / e.total) * 100;
+        bar.style.width = percent + "%";
+      }
+    });
+
+    xhr.onreadystatechange = function(){
+      if(xhr.readyState === 4){
+        if(xhr.status === 200) resolve();
+        else reject('Upload failed: '+xhr.statusText);
+      }
+    }
+
+    xhr.open('POST','/upload');
+    xhr.send(formData);
+  });
+}
 </script>
 </body>
 </html>
